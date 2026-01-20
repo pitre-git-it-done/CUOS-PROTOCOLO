@@ -1,0 +1,185 @@
+{% load static protocolo_extras %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>Painel Interno</title>
+  <link rel="stylesheet" href="{% static 'documentos/app.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'documentos/favicons/Bookmark.png' %}">
+</head>
+<body>
+  <header class="gov-header">
+    <div class="gov-header__top">
+      <div class="gov-header__brand">
+        <div class="gov-header__title">Sistema Temporario de Uso e Ocupacao</div>
+        <div class="gov-header__subtitle">Recepcao de Documentos</div>
+      </div>
+      <div class="gov-header__meta">Painel Interno</div>
+    </div>
+    <div class="gov-header__bar">
+      <nav class="gov-menu">
+        <div class="gov-menu__group">
+          <div class="gov-menu__item">
+            <button class="gov-menu__btn" type="button">Processos de Usuarios</button>
+            <div class="gov-menu__panel">
+              <a href="#processos">Ir para lista</a>
+            </div>
+          </div>
+          <div class="gov-menu__item">
+            <button class="gov-menu__btn" type="button">Relatorios</button>
+            <div class="gov-menu__panel">
+              <form method="get" action="/interno/relatorio.xlsx">
+                <label>Data inicial:</label>
+                <input type="date" name="data_ini">
+
+                <label>Data final:</label>
+                <input type="date" name="data_fim">
+
+                <button type="submit">Baixar Excel</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="gov-menu__group gov-menu__group--right">
+          <form method="post" action="/interno/logout/">
+            {% csrf_token %}
+            <button type="submit" class="gov-menu__btn gov-menu__btn--exit">Sair</button>
+          </form>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container container--wide">
+  <header class="page-header">
+    <h1>Painel Interno - Documentos Recebidos</h1>
+  </header>
+
+  <form method="get">
+    <label>Pesquisar</label>
+    <input type="search" name="q" value="{{ termo }}" placeholder="Protocolo, usuario, requerente...">
+    <button type="submit">Buscar</button>
+  </form>
+
+  <section id="processos">
+    <h2>Processos de Usu&aacute;rios</h2>
+
+  <div class="table-scroll">
+  <table border="1" cellpadding="8" cellspacing="0">
+    <tr>
+      <th>Data</th>
+      <th>Protocolo</th>
+      <th>Usu&aacute;rio</th>
+      <th>Requerente</th>
+      <th>Tipo</th>
+      <th>Descri&ccedil;&atilde;o</th>
+      <th>Status</th>
+      <th>Observa&ccedil;&otilde;es</th>
+      <th>Documento Final</th>
+      <th>PDF Protocolo</th>
+      <th>Anexos</th>
+    </tr>
+
+    {% for p in processos %}
+    <tr>
+      <td>{{ p.data_envio }}</td>
+      <td>{{ p.protocolo|short_protocolo }}</td>
+      <td>{{ p.usuario }}</td>
+      <td>{{ p.nome_requerente }}</td>
+      <td>{{ p.tipo_processo }}</td>
+      <td>{{ p.descricao|default:"-" }}</td>
+      <td>
+        <button type="button" class="status-trigger" data-modal-id="status-modal-{{ p.id }}">
+          {{ p.get_status_display }}
+        </button>
+      </td>
+      <td>{{ p.observacoes|default:"-" }}</td>
+      <td>
+        {% if p.documento_final %}
+          <a href="{{ p.documento_final.url }}" target="_blank">Baixar</a>
+        {% else %}
+          -
+        {% endif %}
+      </td>
+
+      <td>
+        {% if p.pdf_protocolo %}
+          <a href="{{ p.pdf_protocolo.url }}" target="_blank">Baixar PDF</a>
+        {% else %}
+          -
+        {% endif %}
+      </td>
+
+      <td>
+        {% if p.anexos.exists %}
+          <a href="/interno/processos/{{ p.id }}/anexos.zip">Baixar ZIP</a>
+        {% else %}
+          -
+        {% endif %}
+      </td>
+    </tr>
+    <tr class="status-modal-row">
+      <td colspan="12">
+        <div class="status-modal" id="status-modal-{{ p.id }}" aria-hidden="true">
+          <div class="status-modal__content" role="dialog" aria-modal="true">
+            <div class="status-modal__header">
+              <strong>Atualizar processo</strong>
+              <button type="button" class="status-close" data-modal-id="status-modal-{{ p.id }}">Fechar</button>
+            </div>
+            <form method="post" action="/interno/processos/{{ p.id }}/atualizar/" enctype="multipart/form-data" class="inline-form">
+              {% csrf_token %}
+              <label>Status</label>
+              <select name="status">
+                {% for value,label in status_choices %}
+                  <option value="{{ value }}"{% if p.status == value %} selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              <label>Observacoes</label>
+              <textarea name="observacoes" rows="3">{{ p.observacoes }}</textarea>
+              <label>Documento final</label>
+              <input type="file" name="documento_final">
+              <button type="submit">Salvar</button>
+            </form>
+          </div>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+  </section>
+
+  </main>
+  <script>
+    document.querySelectorAll('.status-trigger').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var modal = document.getElementById(btn.getAttribute('data-modal-id'));
+        if (modal) {
+          modal.classList.add('is-open');
+        }
+      });
+    });
+
+    document.querySelectorAll('.status-close').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var modal = document.getElementById(btn.getAttribute('data-modal-id'));
+        if (modal) {
+          modal.classList.remove('is-open');
+        }
+      });
+    });
+
+    document.querySelectorAll('.status-modal').forEach(function (modal) {
+      modal.addEventListener('click', function (event) {
+        if (event.target === modal) {
+          modal.classList.remove('is-open');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

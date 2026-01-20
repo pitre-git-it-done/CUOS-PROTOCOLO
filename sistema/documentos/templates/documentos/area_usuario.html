@@ -1,0 +1,93 @@
+{% load static protocolo_extras %}
+<!doctype html>
+<html lang="pt-br">
+<head><meta charset="utf-8"><title>Minha área</title>  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'documentos/app.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'documentos/favicons/Bookmark.png' %}">
+</head>
+<body>
+  <header class="gov-header">
+    <div class="gov-header__top">
+      <div class="gov-header__brand">
+        <div class="gov-header__title">Sistema Temporario de Uso e Ocupacao</div>
+        <div class="gov-header__subtitle">Recepcao de Documentos</div>
+      </div>
+      <div class="gov-header__meta">Usuario: {{ request.user.first_name }}</div>
+    </div>
+    <div class="gov-header__bar">
+      <nav class="gov-menu">
+        <div class="gov-menu__group">
+          <div class="gov-menu__item">
+            <button class="gov-menu__btn" type="button">Processos</button>
+            <div class="gov-menu__panel">
+              <a href="/processo/novo/">Dar entrada em novo processo</a>
+            </div>
+          </div>
+          <div class="gov-menu__item">
+            <button class="gov-menu__btn" type="button">Conta</button>
+            <div class="gov-menu__panel">
+              <a href="/conta/ajustes/">Alterar dados e senha</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="gov-menu__group gov-menu__group--right">
+          <form method="post" action="/conta/logout/">
+            {% csrf_token %}
+            <button type="submit" class="gov-menu__btn gov-menu__btn--exit">Sair</button>
+          </form>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+  <header class="page-header page-header--stack">
+    <h1>Meus processos</h1>
+  </header>
+
+  <hr>
+
+  {% if processos %}
+    <table border="1" cellpadding="6">
+      <tr>
+        <th>Data</th>
+        <th>Protocolo</th>
+        <th>Tipo</th>
+        <th>Status</th>
+        <th>Observa&ccedil;&otilde;es</th>
+        <th>Documento Final</th>
+        <th>PDF</th>
+      </tr>
+      {% for p in processos %}
+        <tr>
+          <td>{{ p.data_envio }}</td>
+          <td>{{ p.protocolo|short_protocolo }}</td>
+          <td>{{ p.tipo_processo }}</td>
+          <td>{{ p.get_status_display }}</td>
+          <td>{{ p.observacoes|default:"-" }}</td>
+          <td>
+            {% if p.documento_final %}
+              <a target="_blank" href="{{ p.documento_final.url }}">Baixar</a>
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td>
+            {% if p.pdf_protocolo %}
+              <a target="_blank" href="{{ p.pdf_protocolo.url }}">Baixar PDF</a>
+            {% else %}
+              -
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>Você ainda não possui processos.</p>
+  {% endif %}
+  </main>
+</body>
+</html>
+
+

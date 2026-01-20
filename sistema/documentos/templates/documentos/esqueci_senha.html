@@ -1,0 +1,31 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Esqueci a senha</title>
+  <link rel="stylesheet" href="{% static 'documentos/app.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'documentos/favicons/Bookmark.png' %}">
+</head>
+<body>
+  <main class="container">
+    <h1>Esqueci a senha</h1>
+
+    {% if messages %}
+      {% for message in messages %}
+        <p>{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <label>Email</label>
+      <input type="email" name="email" required>
+      <button type="submit">Enviar senha temporaria</button>
+    </form>
+
+    <p><a href="/conta/login/">Voltar ao login</a></p>
+  </main>
+</body>
+</html>

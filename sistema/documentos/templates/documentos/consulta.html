@@ -1,0 +1,53 @@
+{% load static protocolo_extras %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Consulta de Protocolo</title>
+  <link rel="stylesheet" href="{% static 'documentos/app.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'documentos/favicons/Bookmark.png' %}">
+</head>
+<body>
+<main class="container">
+
+<h1>Consulta Pública de Protocolo</h1>
+
+<form method="post">
+  {% csrf_token %}
+  <label>Número do Protocolo:</label><br>
+  <input type="text" name="protocolo" required>
+  <br><br>
+  <button type="submit">Consultar</button>
+</form>
+
+<hr>
+
+{% if erro %}
+  <p style="color:red;">{{ erro }}</p>
+{% endif %}
+
+{% if resultado %}
+  <h2>Resultado</h2>
+  <p><strong>Protocolo:</strong> {{ resultado.protocolo|short_protocolo }}</p>
+  <p><strong>Nome:</strong> {{ resultado.nome_requerente }}</p>
+  <p><strong>CPF:</strong> {{ resultado.cpf }}</p>
+  <p><strong>Tipo de Documento:</strong> {{ resultado.tipo_documento }}</p>
+  <p><strong>Data de envio:</strong> {{ resultado.data_envio }}</p>
+
+  {% if resultado.pdf_protocolo %}
+    <p>
+      <a href="{{ resultado.pdf_protocolo.url }}" target="_blank">
+        Baixar protocolo (PDF)
+      </a>
+    </p>
+  {% endif %}
+
+  <p>
+    <a href="/">Enviar outro documento</a>
+  </p>
+{% endif %}
+
+</main>
+</body>
+</html>

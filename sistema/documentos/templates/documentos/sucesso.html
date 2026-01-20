@@ -1,0 +1,30 @@
+{% load static protocolo_extras %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Protocolo gerado</title>
+  <link rel="stylesheet" href="{% static 'documentos/app.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'documentos/favicons/Bookmark.png' %}">
+</head>
+<body>
+  <main class="container">
+  <h1>Documento recebido com sucesso</h1>
+
+  <p><strong>Protocolo:</strong> {{ doc.protocolo|short_protocolo }}</p>
+  <p><strong>Data/Hora:</strong> {{ doc.data_envio }}</p>
+
+  <p>
+    <a href="{{ doc.pdf_protocolo.url }}" target="_blank">
+      Baixar protocolo (PDF)
+    </a>
+  </p>
+
+  <p>
+    <a href="/">Enviar outro documento</a> |
+    <a href="/consulta/">Consultar protocolo</a>
+  </p>
+  </main>
+</body>
+</html>

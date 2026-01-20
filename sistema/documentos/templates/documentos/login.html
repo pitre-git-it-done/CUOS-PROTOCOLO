@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login Interno</title>
+  <link rel="stylesheet" href="{% static 'documentos/app.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'documentos/favicons/Bookmark.png' %}">
+</head>
+<body>
+  <main class="container">
+  <h1>Acesso Interno</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Entrar</button>
+    <a class="action-link action-link--ghost" href="/conta/esqueci/">Esqueci a senha</a>
+  </form>
+
+  <p><a class="action-link" href="/conta/login/">Acesso do cidadão</a></p>
+
+  {% if form.errors %}
+    <p style="color:red;">Usuário ou senha inválidos.</p>
+  {% endif %}
+  </main>
+</body>
+</html>

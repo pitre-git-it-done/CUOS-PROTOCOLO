@@ -1,0 +1,49 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Novo processo</title>
+  <link rel="stylesheet" href="{% static 'documentos/app.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'documentos/favicons/Bookmark.png' %}">
+</head>
+<body>
+  <main class="container">
+  <h1>Novo processo</h1>
+
+  <nav class="top-menu top-menu--split">
+    <div class="menu-group">
+      <div class="menu-item">
+        <button class="menu-button" type="button">Conta</button>
+        <div class="menu-panel">
+          <a href="/conta/ajustes/">Alterar dados e senha</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-group">
+      <a class="menu-button" href="/area/">Voltar</a>
+    </div>
+  </nav>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <fieldset>
+    <legend>Dados do processo</legend>
+    {{ form_processo.as_p }}
+  </fieldset>
+
+  <fieldset>
+    <legend>Anexos</legend>
+    {{ form_anexos.as_p }}
+  </fieldset>
+
+  <button type="submit">Criar processo</button>
+</form>
+
+<p><a href="/area/">Voltar</a></p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conta</title>
+  <link rel="stylesheet" href="{% static 'documentos/app.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'documentos/favicons/Bookmark.png' %}">
+</head>
+<body>
+  <main class="container">
+    <h1>Conta</h1>
+
+    {% if messages %}
+      {% for message in messages %}
+        <p>{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <h2>Dados da conta</h2>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="acao" value="dados">
+      {{ form_conta.as_p }}
+      <button type="submit">Salvar dados</button>
+    </form>
+
+    <h2>Alterar senha</h2>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="acao" value="senha">
+      {{ form_senha.as_p }}
+      <button type="submit">Alterar senha</button>
+    </form>
+
+    <p><a href="/area/">Voltar</a></p>
+  </main>
+</body>
+</html>
