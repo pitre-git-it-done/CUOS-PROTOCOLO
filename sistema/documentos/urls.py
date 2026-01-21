@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic import RedirectView
 from .views import formulario_publico, consulta_protocolo, sucesso
 from .views import LoginInternoView, LogoutInternoView, painel_interno
 from .views import relatorio_excel, anexos_zip, atualizar_processo
@@ -9,7 +10,7 @@ from .views import novo_processo
 
 
 urlpatterns = [
-    path('', formulario_publico, name='formulario'),
+    path('', RedirectView.as_view(pattern_name='login_usuario'), name='inicio'),
     path('consulta/', consulta_protocolo, name='consulta_protocolo'),
     path('sucesso/<uuid:protocolo>/', sucesso, name='sucesso'),
 
